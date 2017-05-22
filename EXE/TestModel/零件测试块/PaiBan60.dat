@@ -1,0 +1,17 @@
+node,File=GY_GeoTriangle.cli,MovX=40,MovY=35,PenIndex=1
+node,File=GYGeoRectangle060.cli,MovX=40,MovY=25,PenIndex=1
+node,File=GY_GeoCircle.cli,MovX=40,MovY=10,PenIndex=1
+
+node,File=GY_GeoCircle.cli,MovX=25,MovY=30,PenIndex=1
+node,File=GY_GeoTriangle.cli,MovX=25,MovY=15,PenIndex=1
+node,File=GYGeoRectangle060.cli,MovX=25,MovY=10,PenIndex=1
+
+node,File=GYGeoRectangle060.cli,MovX=10,MovY=-15,PenIndex=1
+node,File=GY_GeoCircle.cli,MovX=10,MovY=-30,PenIndex=1
+node,File=GY_GeoTriangle.cli,MovX=10,MovY=-45,PenIndex=1
+
+node,File=GY_Geo4X4Part.cli,MovX=-50,MovY=5,PenIndex=1
+
+node,File=GY_GeoPartI.cli,MovX=-25,MovY=-25,PenIndex=1
+node,File=GY_GeoPartI.cli,MovX=-25,MovY=-55,PenIndex=1
+

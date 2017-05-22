@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.06.00"/>
+    <PROJECT value="..\EXE\SamLightPro.exe"/>
+    <OBJFILES value="..\obj\SamLightPro.obj ..\obj\UnitFileSelect.obj ..\obj\UnitFormGY.obj 
+      ..\obj\UnitFormLaserPen.obj ..\obj\UnitFormLaserSetting.obj 
+      ..\obj\UnitFormMain.obj ..\obj\UnitFormMechConfig.obj 
+      ..\obj\UnitFormPMac.obj ..\obj\UnitFormSamLight.obj 
+      ..\obj\UnitModelLoad.obj ..\obj\UnitNewProject.obj 
+      ..\obj\UnitOpenProject.obj ..\obj\UnitSystemTest.obj 
+      ..\obj\UnitTestInstance.obj ..\src\clipper.obj ..\obj\COMMON_FUNC.obj 
+      ..\obj\UnitTool_Class.obj ..\obj\UnitTool_ClassExtend.obj 
+      ..\obj\UnitTool_Single.obj ..\obj\UnitGenDXFThread.obj"/>
+    <RESFILES value="SamLightPro.res"/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES) ..\src\UnitFileSelect.dfm ..\src\UnitFormGY.dfm 
+      ..\src\UnitFormLaserPen.dfm ..\src\UnitFormLaserSetting.dfm 
+      ..\src\UnitFormMain.dfm ..\src\UnitFormMechConfig.dfm 
+      ..\src\UnitFormPMac.dfm ..\src\UnitFormSamLight.dfm 
+      ..\src\UnitModelLoad.dfm ..\src\UnitNewProject.dfm 
+      ..\src\UnitOpenProject.dfm ..\src\UnitSystemTest.dfm 
+      ..\src\UnitTestInstance.dfm"/>
+    <LIBFILES value=""/>
+    <LIBRARIES value=""/>
+    <SPARELIBS value="vcl.lib rtl.lib dclusr.lib vclx.lib dbrtl.lib adortl.lib vcldb.lib 
+      bdertl.lib vcldbx.lib ibxpress.lib cds.lib bdecds.lib qrpt.lib teeui.lib 
+      teedb.lib tee.lib dss.lib teeqr.lib visualdbclx.lib dsnapcrba.lib 
+      dsnapcon.lib bcbsmp.lib inetdbbde.lib inetdbxpress.lib dbexpress.lib 
+      nmfast.lib bcbie.lib soaprtl.lib dclocx.lib dbxcds.lib indy.lib 
+      bcb2kaxserver.lib"/>
+    <PACKAGES value="vcl.bpi rtl.bpi dbrtl.bpi adortl.bpi vcldb.bpi vclx.bpi bdertl.bpi 
+      vcldbx.bpi ibxpress.bpi dsnap.bpi cds.bpi bdecds.bpi qrpt.bpi teeui.bpi 
+      teedb.bpi tee.bpi dss.bpi teeqr.bpi visualclx.bpi visualdbclx.bpi 
+      dsnapcrba.bpi dsnapcon.bpi bcbsmp.bpi vclie.bpi xmlrtl.bpi inet.bpi 
+      inetdbbde.bpi inetdbxpress.bpi inetdb.bpi nmfast.bpi webdsnap.bpi 
+      bcbie.bpi websnap.bpi soaprtl.bpi dclocx.bpi dbexpress.bpi dbxcds.bpi 
+      indy.bpi bcb2kaxserver.bpi dclusr.bpi"/>
+    <PATHCPP value=".;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\Common;..\Common;..\Common;..\src"/>
+    <PATHPAS value=".;..\Common"/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;"/>
+    <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
+    <RELEASELIBPATH value="$(BCB)\lib\release"/>
+    <LINKER value="ilink32"/>
+    <USERDEFINES value="_DEBUG"/>
+    <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
+    <MAINSOURCE value="SamLightPro.cpp"/>
+    <INCLUDEPATH value="&quot;C:\Program Files (x86)\Borland\CBuilder6\Projects&quot;;..\src;..\Common;..\..\4_Manual3DMaker\bpr;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="&quot;C:\Program Files (x86)\Borland\CBuilder6\Projects&quot;;..\src;..\Common;..\..\4_Manual3DMaker\bpr;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <WARNINGS value="-w-par"/>
+    <OTHERFILES value=""/>
+  </MACROS>
+  <OPTIONS>
+    <IDLCFLAGS value="-I&quot;C:\Program Files (x86)\Borland\CBuilder6\Projects&quot; -I..\src -I..\Common 
+      -I..\..\4_Manual3DMaker\bpr -I$(BCB)\include -I$(BCB)\include\vcl 
+      -src_suffix cpp -D_DEBUG -boa"/>
+    <CFLAG1 value="-Od -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -c 
+      -tW -tWM"/>
+    <PFLAGS value="-N2..\obj -N0..\obj -$YD -$W -$O- -$A8 -v -JPHNE -M"/>
+    <RFLAGS value=""/>
+    <AFLAGS value="/mx /w2 /zd"/>
+    <LFLAGS value="-I..\obj -D&quot;&quot; -aa -Tpe -x -Gn -v"/>
+    <OTHERFILES value=""/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="c0w32.obj $(PACKAGES) Memmgr.Lib sysinit.obj $(OBJFILES)"/>
+    <ALLRES value="$(RESFILES)"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mti.lib"/>
+    <OTHERFILES value=""/>
+  </LINKER>
+  <FILELIST>
+      <FILE FILENAME="SamLightPro.res" FORMNAME="" UNITNAME="SamLightPro.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="SamLightPro.cpp" FORMNAME="" UNITNAME="SamLightPro" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\UnitFileSelect.cpp" FORMNAME="FormFileCombine" UNITNAME="UnitFileSelect" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\UnitFormGY.cpp" FORMNAME="FormGYDesign" UNITNAME="UnitFormGY" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\UnitFormLaserPen.cpp" FORMNAME="FormLaserPen" UNITNAME="UnitFormLaserPen" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\UnitFormLaserSetting.cpp" FORMNAME="FormLaserSetting" UNITNAME="UnitFormLaserSetting" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\UnitFormMain.cpp" FORMNAME="FormMain" UNITNAME="UnitFormMain" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\UnitFormMechConfig.cpp" FORMNAME="FormMechConfig" UNITNAME="UnitFormMechConfig" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\UnitFormPMac.cpp" FORMNAME="FormPmac" UNITNAME="UnitFormPMac" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\UnitFormSamLight.cpp" FORMNAME="FormSamLight" UNITNAME="UnitFormSamLight" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\UnitModelLoad.cpp" FORMNAME="FormLoadModel" UNITNAME="UnitModelLoad" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\UnitNewProject.cpp" FORMNAME="FormNewProject" UNITNAME="UnitNewProject" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\UnitOpenProject.cpp" FORMNAME="FormOpenProject" UNITNAME="UnitOpenProject" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\UnitSystemTest.cpp" FORMNAME="FormSystemTest" UNITNAME="UnitSystemTest" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\UnitTestInstance.cpp" FORMNAME="FormTestInstance" UNITNAME="UnitTestInstance" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\clipper.obj" FORMNAME="" UNITNAME="clipper.obj" CONTAINERID="OBJTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\Common\COMMON_FUNC.pas" FORMNAME="" UNITNAME="COMMON_FUNC" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\Common\UnitTool_Class.cpp" FORMNAME="" UNITNAME="UnitTool_Class.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\Common\UnitTool_ClassExtend.cpp" FORMNAME="" UNITNAME="UnitTool_ClassExtend.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\Common\UnitTool_Single.cpp" FORMNAME="" UNITNAME="UnitTool_Single.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\UnitGenDXFThread.cpp" FORMNAME="" UNITNAME="UnitGenDXFThread" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+  </FILELIST>
+  <BUILDTOOLS>
+  </BUILDTOOLS>
+
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=0
+AutoIncBuild=0
+MajorVer=1
+MinorVer=0
+Release=0
+Build=0
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+Locale=2052
+CodePage=936
+
+[Version Info Keys]
+CompanyName=
+FileDescription=
+FileVersion=1.0.0.0
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
+
+[HistoryLists\hlIncludePath]
+Count=1
+Item0=..\src;..\Common;..\..\4_Manual3DMaker\bpr;..\..\5_SAMLightPro\src;$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=1
+Item0=..\src;..\Common;..\..\4_Manual3DMaker\bpr;..\..\5_SAMLightPro\src;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=1
+Item0=_DEBUG
+
+[HistoryLists\hlIntOutputDir]
+Count=1
+Item0=..\obj
+
+[HistoryLists\hlFinalOutputDir]
+Count=1
+Item0=..\EXE
+
+[Debugging]
+DebugSourceDirs=$(BCB)\source\vcl
+
+[Parameters]
+RunParams=
+Launcher=
+UseLauncher=0
+DebugCWD=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteLauncher=
+RemoteCWD=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=0
+LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
+
+[Language]
+ActiveLang=
+ProjectLang=
+RootDir=
+  </IDEOPTIONS>
+</PROJECT>

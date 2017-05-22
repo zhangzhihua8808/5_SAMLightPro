@@ -1,0 +1,479 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "UnitFormPMac.h"
+#include "UnitTool_ClassExtend.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma link "PCOMMSERVERLib_OCX"
+#pragma resource "*.dfm"
+
+TFormPmac* FormPmac;
+
+//---------------------------------------------------------------------------
+__fastcall TFormPmac::TFormPmac(TComponent* Owner)
+        : TForm(Owner)
+{
+    fIsOpened = false;
+    fDevice = 0;
+    fConnectStatus = "Not Connected";
+    fStatusPanel = NULL;
+    fFirstGearPos = 454.0;
+
+    //电机Home的PMAC监控变量
+    fMotorHomeMap = new TStringList;
+    fMotorHomeMap->Add("M145");   //1号电机
+    fMotorHomeMap->Add("M245");
+    fMotorHomeMap->Add("M345");
+    fMotorHomeMap->Add("M445");
+    fMotorHomeMap->Add("M545");
+    fMotorHomeMap->Add("M645");
+    fMotorHomeMap->Add("M745");
+    fMotorHomeMap->Add("M845");
+}
+//---------------------------------------------------------------------------
+//初始化
+void  TFormPmac::Init()
+{
+    if(fIsOpened)
+        PmacDevice1->Close(fDevice);
+
+    fIsOpened = false;
+    fDevice = 0;
+    fConnectStatus = "Not Connected";
+    StatusInfo = "PMAC运动控制卡断开";
+}
+
+//打开设备
+void  TFormPmac::PMacOpen()
+{
+    long int dev = 0;                 //Device对话框中的设备号
+
+    VARIANT_BOOL bSuccess;
+    WideString  vs,ds;
+
+    //先打开默认的
+    PmacDevice1->Open(dev,&bSuccess);
+    if(bSuccess)
+    {
+        fDevice = dev;
+        fIsOpened = true;
+        fConnectStatus = "Connected";
+        StatusInfo = "PMAC运动控制卡连接成功!";
+    }
+    else    //打开选择的
+    {
+       PmacDevice1->SelectDevice(0,&dev,&bSuccess);    //先择
+       if(bSuccess)
+       {
+            fDevice = dev;
+            fIsOpened = true;
+            fConnectStatus = "Connected";
+            StatusInfo = "PMAC运动控制卡连接成功!";
+       }
+       else
+       {
+            fIsOpened = false;
+            fConnectStatus = "Not Connected";
+            StatusInfo = "PMAC运动控制卡连接失败!";
+       }
+    }
+}
+
+//关闭设备
+void  TFormPmac::PMacClose()
+{
+    if(fIsOpened)
+    {
+        PmacDevice1->Close(fDevice);
+        fIsOpened = false;
+        fConnectStatus = "Not Connected";
+        StatusInfo = "PMAC运动控制卡断开";
+    }
+}
+
+//------------------------------------------------------------------------------
+void __fastcall TFormPmac::FormClose(TObject *Sender, TCloseAction &Action)
+{
+    delete fMotorHomeMap;
+}
+
+//状态的显示
+void   TFormPmac::writeStatusPanel(String aText)
+{
+    if(fStatusPanel == NULL)
+        return;
+    fStatusPanel->Text = aText;
+}
+
+//------------------------------------------------------------------------------
+//iMotorNumber: 1~8
+//电机正向运转，开环
+void  TFormPmac::MotorJogInc(int  iMotorNumber)
+{
+    if(IsOpened)
+    {
+        String  aCommand = "#"+IntToStr(iMotorNumber)+"j+";
+        SendCommand(aCommand);
+    }
+    else
+    {
+        StatusInfo = "PMAC运动控制卡断开";
+        throw Exception("PMAC 设备没有打开");
+    }
+}
+
+//电机反向运转，开环
+void  TFormPmac::MotorJobDec(int  iMotorNumber)
+{
+    if(IsOpened)
+    {
+        String  aCommand = "#"+IntToStr(iMotorNumber)+"j-";
+        SendCommand(aCommand);
+    }
+    else
+    {
+        StatusInfo = "PMAC运动控制卡断开";
+        throw Exception("PMAC 设备没有打开");
+    }
+}
+
+//电机停止，开环
+void  TFormPmac::MotorStop(int  iMotorNumber)
+{
+    if(IsOpened)
+    {
+        String  aCommand = "#"+IntToStr(iMotorNumber)+"j/";
+        SendCommand(aCommand);
+    }
+    else
+    {
+        StatusInfo = "PMAC运动控制卡断开";
+        throw Exception("PMAC 设备没有打开");
+    }
+}
+
+//4: Z,
+//3: 刮刀
+//回原点，开环
+void  TFormPmac::MotorHome(int iMotorNumber)
+{
+   if(IsOpened)
+   {
+       String  aCommand = "#"+IntToStr(iMotorNumber)+"HM";
+       SendCommand(aCommand);
+   }
+   else
+   {
+       StatusInfo = "PMAC运动控制卡断开";
+       throw Exception("PMAC 设备没有打开");
+   }
+}
+
+//aVarName: 为监控变量，如M445（Z轴电机完成标志）
+//完成标志：1
+void  TFormPmac::MotorHomeUntilFinish(int iMotorNumber)
+{
+    MotorHome(iMotorNumber);
+
+    String aVarName = fMotorHomeMap->Strings[iMotorNumber-1];
+    if(aVarName != "M"+IntToStr(iMotorNumber)+"45")
+          throw Exception("Home 监控的变量错误");
+
+    WaitCommandFinish(aVarName,"1");
+}
+
+
+//
+void  TFormPmac::VarNameSet(String aVarName,String  bOn)
+{
+    if(IsOpened)
+    {
+        String  aCommand = aVarName + "=" + bOn;
+        SendCommand(aCommand);
+
+        gError->Warn(aCommand);
+    }
+    else
+    {
+        StatusInfo = "PMAC运动控制卡断开";
+        throw Exception("PMAC 设备没有打开");
+    }
+}
+
+String  TFormPmac::GetVarValueTrimCRLF(String  VarName)
+{
+    if(IsOpened)
+    {
+       WideString  aAnswer;
+       long int  iStatus;
+
+       try
+       {
+           PmacDevice1->GetResponseEx(fDevice,WideString(VarName),true,&aAnswer,&iStatus);
+           gError->Warn(VarName + "=" + String(aAnswer));
+
+           String  aValue = String(aAnswer);
+           if(HasSubString(aValue,"\n"))
+                return aValue.SubString(1,aValue.Length()-1);
+           else
+                return  aValue;
+       }
+       catch(Exception& e)
+       {
+           throw Exception("获取变量" + VarName + "值失败!");
+       }
+    }
+    else
+    {
+        StatusInfo = "PMAC运动控制卡断开";
+        throw Exception("PMAC 设备没有打开");
+    }
+}
+
+
+//--------------------------------废弃的代码------------------------------------
+//aProgram: like P100
+//aPos : 1~4
+//aVarName
+//aVarName: M445
+//??? 未完成： 设置变量，执行程序，检测完成;
+/*
+void  TFormPmac::DoProgramUntilFinish(String  aChar,String aProgramID,String  aPos)
+{
+    String  aCommand = aChar + aProgramID + "=" + aPos;
+    SendCommand(aCommand);
+    SendCommand("b"+aProgramID+"r");     //运行
+    WaitCommandFinish("M5180","0");
+}
+//bLisght = 0: 关灯，1： 开灯
+void  TFormPmac::LightControl(bool  bOn)
+{
+    if(IsOpened)
+    {
+        String  aCommand;
+        if(bOn) //
+        {
+            aCommand = "M4014=1";
+        }
+        else
+        {
+            aCommand = "M4014=0";
+        }
+
+        SendCommand(aCommand);
+    }
+    else
+    {
+        StatusInfo = "PMAC运动控制卡断开";
+        throw Exception("PMAC 设备没有打开");
+    }
+}
+
+bool  TFormPmac::IsActionFinish(String  aVarName)
+{
+    String  aStr = GetVarValue(aVarName);
+    if(HasSubString(aStr,"1"))
+        return true;
+    else
+        return false;
+}
+
+void  TFormPmac::DownLoadFile(String  aFileName,short& aSuccess)
+{
+    if(IsOpened)
+    {
+        short int aRet;
+        PmacDevice1->Download(fDevice,WideString(aFileName),false,false,true,true,&aRet);
+
+        aSuccess = aRet;
+    }
+    else
+    {
+        StatusInfo = "PMAC运动控制卡断开";
+        throw Exception("PMAC 设备没有打开");
+    }
+}
+
+*/
+
+//手动方式: 增量方式,1 结束
+void  TFormPmac::MotorRalateModeUntilFinish(int iMotorNumber,int iPulseCount,String aVarName,String aVarValue)
+{
+    if(iMotorNumber < 0 || iMotorNumber > 4)  throw Exception("电机号参数错误");
+
+    String  aCmdStr = "#" + IntToStr(iMotorNumber) + "J:" + IntToStr(iPulseCount);
+    //执行
+    SendCommand(aCmdStr);
+
+    WaitCommandFinish(aVarName,aVarValue);
+}
+
+//无限等待完成
+void  TFormPmac::WaitCommandFinish(String aVarName, String  aFinishSymbol)
+{
+    if(!IsOpened)
+    {
+        StatusInfo = "PMAC运动控制卡断开";
+        throw Exception("PMAC 设备没有打开");
+    }
+
+    for(;;)
+    {
+       String  aStr = GetVarValueTrimCRLF(aVarName);
+       if(aStr == aFinishSymbol)   return;    //完成
+
+       Application->ProcessMessages();
+    }
+}
+
+
+//发送一个命令
+void  TFormPmac::SendCommand(String aCmdStr)
+{
+    if(!IsOpened)
+    {
+        StatusInfo = "PMAC运动控制卡断开";
+        throw Exception("PMAC 设备没有打开");
+    }
+    try
+    {
+        long  ans;
+        PmacDevice1->SendCommand(fDevice,WideString(aCmdStr),&ans);
+
+        gError->Warn(aCmdStr);
+    }
+    catch(Exception& e)
+    {
+        throw Exception("SendCommand:" + aCmdStr + "失败");
+    }
+}
+
+void  TFormPmac::SendCommand(MConfigVar*  aCmd)
+{
+    if(aCmd == NULL)  throw Exception("命令变量为空");
+
+    if(!IsOpened)
+    {
+        StatusInfo = "PMAC运动控制卡断开";
+        throw Exception("PMAC 设备没有打开");
+    }
+
+    //激光器上电功能
+    if(aCmd->ConfigVarType == "子程序" && aCmd->ConfigVarName == "激光器上电")
+    {
+        gError->Warn("cmd: b" + aCmd->ConfigVarCode + "r");
+        SendCommand("b"+ aCmd->ConfigVarCode + "r");
+    }
+    else if(aCmd->ConfigVarType == "子程序" && aCmd->ConfigVarName == "激光器断电")
+    {
+        gError->Warn("cmd: b" + aCmd->ConfigVarCode + "r");
+        SendCommand("b"+ aCmd->ConfigVarCode + "r");
+    }
+    else if(aCmd->ConfigVarType == "变量")
+    {
+        gError->Warn("cmd:" + aCmd->ConfigVarKey + "=" + aCmd->ConfigVarValue);
+        VarNameSet(aCmd->ConfigVarKey,aCmd->ConfigVarValue);
+    }
+
+    /*
+    else if(aCmd->ConfigVarType == "变量" && aCmd->ConfigVarName == "伺服上电")
+    {
+        gError->Warn("cmd:" + aCmd->ConfigVarKey + "=" + aCmd->ConfigVarValue);
+        VarNameSet(aCmd->ConfigVarKey,aCmd->ConfigVarValue);
+    }
+    else if(aCmd->ConfigVarType == "变量" && aCmd->ConfigVarName == "伺服断电")
+    {
+        gError->Warn("cmd:" + aCmd->ConfigVarKey + "=" + aCmd->ConfigVarValue);
+        VarNameSet(aCmd->ConfigVarKey,aCmd->ConfigVarValue);
+    }
+    else if(aCmd->ConfigVarType == "变量" && aCmd->ConfigVarName == "照明开")
+    {
+        gError->Warn("cmd:" + aCmd->ConfigVarKey + "=" + aCmd->ConfigVarValue);
+        VarNameSet(aCmd->ConfigVarKey,aCmd->ConfigVarValue);
+    }
+    else if(aCmd->ConfigVarType == "变量" && aCmd->ConfigVarName == "照明关")
+    {
+        gError->Warn("cmd:" + aCmd->ConfigVarKey + "=" + aCmd->ConfigVarValue);
+        VarNameSet(aCmd->ConfigVarKey,aCmd->ConfigVarValue);
+    }
+    else if(aCmd->ConfigVarType == "变量" && aCmd->ConfigVarName == "门锁开")
+    {
+        gError->Warn("cmd:" + aCmd->ConfigVarKey + "=" + aCmd->ConfigVarValue);
+        VarNameSet(aCmd->ConfigVarKey,aCmd->ConfigVarValue);
+    }
+    else if(aCmd->ConfigVarType == "变量" && aCmd->ConfigVarName == "门锁关")
+    {
+        gError->Warn("cmd:" + aCmd->ConfigVarKey + "=" + aCmd->ConfigVarValue);
+        VarNameSet(aCmd->ConfigVarKey,aCmd->ConfigVarValue);
+    }
+    else if(aCmd->ConfigVarType == "变量" && aCmd->ConfigVarName == "出激光")
+    {
+        gError->Warn("cmd:" + aCmd->ConfigVarKey + "=" + aCmd->ConfigVarValue);
+        VarNameSet(aCmd->ConfigVarKey,aCmd->ConfigVarValue);
+    }
+    else if(aCmd->ConfigVarType == "变量" && aCmd->ConfigVarName == "关激光")
+    {
+        gError->Warn("cmd:" + aCmd->ConfigVarKey + "=" + aCmd->ConfigVarValue);
+        VarNameSet(aCmd->ConfigVarKey,aCmd->ConfigVarValue);
+    }
+    */
+}
+
+
+//铺分工作
+void TFormPmac::SpreadPowder(int aGear)
+{
+    if(!IsOpened)
+    {
+        StatusInfo = "PMAC运动控制卡断开";
+        throw Exception("PMAC 设备没有打开");
+    }
+
+    //long  aGearPos[6] = {454,454+3,454+3*2,454+3*3,454+3*4,454+3*5};
+
+    //前进到指定位置
+    FormPmac->MotorAbsoluteModeUntilFinish(3, (fFirstGearPos + aGear*3)*1000,"M340");
+
+    //退回来
+    FormPmac->MotorHomeUntilFinish(3);
+}
+
+//绝对坐标模式，变量值为1 返回
+void  TFormPmac::MotorAbsoluteModeUntilFinish(int iMotorNumber,int iPos,String aVarName,String aVarValue)
+{
+    if(iMotorNumber < 0 || iMotorNumber > 4)  throw Exception("电机号参数错误");
+
+    String  aCmdStr = "#" + IntToStr(iMotorNumber) + "J=" + IntToStr(iPos);
+    SendCommand(aCmdStr);
+
+    WaitCommandFinish(aVarName,aVarValue);
+}
+
+//修正以后的方法
+float TFormPmac::ReadO2Percent()
+{
+    //切换
+    try
+    {
+        VarNameSet("m4009","1");
+        String  aValue = GetVarValueTrimCRLF("m205");
+
+        return StrToFloat(aValue)*2/1024;
+    }
+    catch(Exception& e)
+    {
+       return 0.0;
+    }
+}
+
+float TFormPmac::ReadPresureValue()
+{
+    String  aValue = GetVarValueTrimCRLF("m105");
+    return StrToFloat(aValue)*5.0/1024;
+}
+
+//---------------------------------------------------------------------------
+

@@ -1,0 +1,109 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "UnitFormMechConfig.h"
+#include "UnitTool_Class.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TFormMechConfig *FormMechConfig;
+//---------------------------------------------------------------------------
+__fastcall TFormMechConfig::TFormMechConfig(TComponent* Owner)
+        : TForm(Owner)
+{
+   Init();
+}
+//---------------------------------------------------------------------------
+void  TFormMechConfig::Init()
+{
+   EnableModify = false;   //不允许修改
+
+   String aWorkArea = gIniFile->ReadString("Project","WorkArea","125");
+   WorkAreaLength = aWorkArea;
+
+   String aZInitPos = gIniFile->ReadString("MechConfig","ZInitHeight","236");
+   ZInitPosition = aZInitPos;
+
+   String aBasePanelThick = gIniFile->ReadString("MechConfig","BasePanelThick","18");
+   BasePanelThick = aBasePanelThick;
+
+   String aFocalOffset = gIniFile->ReadString("MechConfig","FocalOffset","0");
+   FocalOffset = aFocalOffset;
+}
+
+//------------------------------------------------------------------------------
+String  TFormMechConfig::readWorkAreaLength()
+{
+    return Edit_WorkAreaLength->Text;
+}
+
+void  TFormMechConfig::writeWorkAreaLength(String aLength)
+{
+    Edit_WorkAreaLength->Text = aLength;
+    Edit_WorkAreaWidth->Text = aLength;
+}
+
+//焦平面偏移： 向上移动：正；向下移动：负
+String  TFormMechConfig::readFocalOffset()
+{
+    return this->Edit1->Text;
+}
+
+void   TFormMechConfig::writeFocalOffset(String aValue)
+{
+    Edit1->Text = aValue;
+}
+
+String  TFormMechConfig::readZInitPosition()
+{
+    return Edit_ZInitPos->Text;
+}
+
+void   TFormMechConfig::writeZInitPosition(String aString)
+{
+    Edit_ZInitPos->Text = aString;
+}
+
+String  TFormMechConfig::readBasePanelThick()
+{
+    return Edit_BaseBoardThick->Text;
+}
+
+void  TFormMechConfig::writeBasePanelThick(String  aThick)
+{
+    Edit_BaseBoardThick->Text = aThick;
+}
+
+//------------------------------------------------------------------------------
+bool  TFormMechConfig::readEnabled()
+{
+    return CBox_WorkArea->Checked;
+}
+
+void  TFormMechConfig::writeEnabled(bool bEnable)
+{
+    Edit_BaseBoardThick->Enabled = bEnable;
+    Edit_WorkAreaLength->Enabled = bEnable;
+    Edit_ZInitPos->Enabled = bEnable;
+    Edit1->Text = bEnable;
+}
+
+//------------------------------------------------------------------------------
+void __fastcall TFormMechConfig::CBox_WorkAreaClick(TObject *Sender)
+{
+   EnableModify = CBox_WorkArea->Checked;
+}
+//---------------------------------------------------------------------------
+//修改参数  OK
+void __fastcall TFormMechConfig::BitBtn1Click(TObject *Sender)
+{
+   gIniFile->WriteString("Project","WorkArea",WorkAreaLength);
+   gIniFile->WriteString("MechConfig","ZInitHeight",ZInitPosition);
+   gIniFile->WriteString("MechConfig","BasePanelThick",BasePanelThick);
+
+   gIniFile->WriteString("MechConfig","FocalOffset",FocalOffset);
+}
+//---------------------------------------------------------------------------
+

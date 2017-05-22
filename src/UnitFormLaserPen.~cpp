@@ -1,0 +1,108 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "UnitFormLaserPen.h"
+#include "UnitTool_ClassExtend.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TFormLaserPen *FormLaserPen;
+//---------------------------------------------------------------------------
+__fastcall TFormLaserPen::TFormLaserPen(TComponent* Owner)
+        : TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void  TFormLaserPen::Init(MLaserPen* aItem, double  aMaxPower)
+{
+   if(aItem == NULL)  return;
+
+   SetCaption(aItem->PenID);
+
+   PenID = IntToStr(aItem->PenID);
+   PenName = aItem->PenName;
+   PenPower = aItem->PenPower;
+   PenSpeed = aItem->PenSpeed;
+   PenFreq = aItem->PenFreq;
+
+   fMaxPower =  aMaxPower;
+}
+
+void  TFormLaserPen::SetCaption(String  aPenID)
+{
+    Caption = "±à¼­#" + aPenID + "ºÅ±Ê";
+}
+
+String TFormLaserPen::readPenName()
+{
+    return this->Edit_PenName->Text;
+}
+
+void   TFormLaserPen::writePenName(String  aPenName)
+{
+   this->Edit_PenName->Text = aPenName;
+}
+
+String TFormLaserPen::readPenPower()
+{
+    return this->Edit_PenPower->Text;
+}
+
+void   TFormLaserPen::writePenPower(String aPenPower)
+{
+    if(StrToFloat(aPenPower) > fMaxPower)
+    {
+        this->Edit_PenPower->Text = FloatToStr(fMaxPower);
+    }
+    else
+        this->Edit_PenPower->Text = aPenPower;
+}
+
+String TFormLaserPen::readPenSpeed()
+{
+   return this->Edit_Speed->Text;
+}
+
+String TFormLaserPen::readPenFreq()
+{
+   return this->Edit_PenFreq->Text;
+}
+
+void   TFormLaserPen::writePenSpeed(String aSpeed)
+{
+   this->Edit_Speed->Text = aSpeed;
+}
+
+void   TFormLaserPen::writePenFreq(String aFreq)
+{
+    this->Edit_PenFreq->Text = aFreq;
+}
+
+void   TFormLaserPen::writePenID(String aID)
+{
+    this->Edit_PenID->Text = aID;
+}
+
+void __fastcall TFormLaserPen::BitBtn1Click(TObject *Sender)
+{
+    try
+    {
+      StrToFloat(this->Edit_PenPower->Text);
+      StrToFloat(this->Edit_Speed->Text);
+      StrToFloat(this->Edit_PenFreq->Text);
+    }
+    catch(Exception& e)
+    {
+      return; 
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFormLaserPen::Edit_PenPowerExit(TObject *Sender)
+{
+    writePenPower(Edit_PenPower->Text);
+}
+//---------------------------------------------------------------------------
+

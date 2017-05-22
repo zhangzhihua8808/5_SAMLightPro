@@ -1,0 +1,15 @@
+[Project]
+ProjectPath=E:\1-项目工程\0_SAMLightPro\EXE\工程目录\bbb
+WindowRange = 150
+WorkArea = 125
+[DataModule]
+DataModuleID=396
+[SamLight]
+MemoShow=true
+IsShow=false
+IP=127.0.0.1
+Port=350
+[MechConfig]
+ZInitHeight = 236
+BasePanelThick = 18
+
